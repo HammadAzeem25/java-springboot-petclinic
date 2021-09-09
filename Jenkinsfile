@@ -37,7 +37,6 @@ pipeline {
               }
             }
           }
-
          stage('Deployment Approval') {
             steps {
               script {
@@ -47,31 +46,6 @@ pipeline {
                }
             }
          }   
-        
-        // stage('AWS ecr login') {
-            //steps {
-               // sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECRREGISTRY}'
-            //}
-        //}        
-        // stage('docker build and tag') {
-            //steps {
-              //  sh 'docker build -t ${IMAGENAME}:${IMAGE_TAG} .'
-               // sh 'docker tag ${IMAGENAME}:${IMAGE_TAG} ${ECRREGISTRY}/${IMAGENAME}:${IMAGE_TAG}'
-           // }
-     //   }  
-       //  stage('docker push') {
-         //   steps {
-             //   sh 'docker push ${ECRREGISTRY}/${IMAGENAME}:${IMAGE_TAG}'
-            //}
-       // }                
-        
-   // }
-   // post {
-      //  always {
-         //   junit 'target/surefire-reports/TEST-*.xml'
-         //   deleteDir()
-      //  }
-   // }
   }
 
 }
