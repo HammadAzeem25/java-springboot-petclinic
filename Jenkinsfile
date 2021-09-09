@@ -5,10 +5,12 @@ pipeline {
         jdk 'jdk8'
     }
     environment { 
-        AWS_REGION = 'us-east-1'
-        ECRREGISTRY = '464599248654.dkr.ecr.us-east-1.amazonaws.com'
+        AWS_REGION = 'us-west-2'
+        ECRREGISTRY = '007600611043.dkr.ecr.us-west-2.amazonaws.com'
         IMAGENAME = 'demomk'
         IMAGE_TAG = 'latest'
+        ECS_CLUSTER = 'sergeocluster'
+        ECS_SERVICE = 'sergeoservice'
     }
     stages {
        stage ('Clone') {
@@ -30,8 +32,8 @@ pipeline {
         stage("build & SonarQube analysis") {
             agent any
             steps {
-              withSonarQubeEnv('sonarserver') {
-                sh 'mvn clean package sonar:sonar'
+                withSonarQubeEnv('sonarserver') {
+                  sh "mvn clean package sonar:sonar  -Dsonar.host.url=http://34.217.92.179:8443 -Dsonar.login=9d459e9a90f58879082ce0d24f02e929450af88b -Dsonar.projectKey=jjtech -Dsonar.projectName=Haplet -Dsonar.Version=1.0"
               }
             }
           }
@@ -46,28 +48,30 @@ pipeline {
             }
          }   
         
-         stage('AWS ecr login') {
-            steps {
-                sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECRREGISTRY}'
-            }
-        }        
-         stage('docker build and tag') {
-            steps {
-                sh 'docker build -t ${IMAGENAME}:${IMAGE_TAG} .'
-                sh 'docker tag ${IMAGENAME}:${IMAGE_TAG} ${ECRREGISTRY}/${IMAGENAME}:${IMAGE_TAG}'
-            }
-        }  
-         stage('docker push') {
-            steps {
-                sh 'docker push ${ECRREGISTRY}/${IMAGENAME}:${IMAGE_TAG}'
-            }
-        }                
+        // stage('AWS ecr login') {
+            //steps {
+               // sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECRREGISTRY}'
+            //}
+        //}        
+        // stage('docker build and tag') {
+            //steps {
+              //  sh 'docker build -t ${IMAGENAME}:${IMAGE_TAG} .'
+               // sh 'docker tag ${IMAGENAME}:${IMAGE_TAG} ${ECRREGISTRY}/${IMAGENAME}:${IMAGE_TAG}'
+           // }
+     //   }  
+       //  stage('docker push') {
+         //   steps {
+             //   sh 'docker push ${ECRREGISTRY}/${IMAGENAME}:${IMAGE_TAG}'
+            //}
+       // }                
         
-    }
-    post {
-        always {
-            junit 'target/surefire-reports/TEST-*.xml'
-            deleteDir()
-        }
-    }
+   // }
+   // post {
+      //  always {
+         //   junit 'target/surefire-reports/TEST-*.xml'
+         //   deleteDir()
+      //  }
+   // }
+  }
+
 }
